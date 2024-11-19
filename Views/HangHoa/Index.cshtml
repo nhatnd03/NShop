@@ -1,4 +1,4 @@
-﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core
 @model X.PagedList.IPagedList<app1.ViewModels.HangHoaVM>
 @{
     ViewData["Title"] = "Index";
@@ -18,13 +18,18 @@
 @await Html.PartialAsync("ProductItem", Model)
 <div class="col-12">
     <div class="pagination d-flex justify-content-center mt-5">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice }),
-        new X.PagedList.Mvc.Core.PagedListRenderOptions
-   {
-       DisplayPageCountAndCurrentLocation = false,
-       LiElementClasses = new string[] { "page-item" },
-       PageClasses = new string[] { "page-link" },
-       UlElementClasses = new string[] { "pagination", "d-flex", "justify-content-center" }
-   })
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, loai = ViewBag.Loai ?? "" }),
+                 new X.PagedList.Mvc.Core.PagedListRenderOptions
+        {
+
+            DisplayPageCountAndCurrentLocation = false,
+
+            LiElementClasses = new string[] { "page-item" },
+
+            PageClasses = new string[] { "page-link" },
+
+            UlElementClasses = new string[] { "pagination", "d-flex", "justify-content-center" }
+        })
+
     </div>
 </div><!-- Fruits Shop End-->

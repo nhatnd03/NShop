@@ -15,20 +15,14 @@ namespace app1.Controllers
             this.db = db;
         }
 
-        public IActionResult Index(int? loai, int? page, double? minPrice, double? maxPrice)
+        public IActionResult Index(int? loai, int? page)
         {
             var hangHoas = db.HangHoas.AsQueryable();
             if (loai.HasValue)
             {
                 hangHoas = hangHoas.Where(p => p.MaLoai == loai.Value);
+                ViewBag.Loai = loai;
             }
-
-            // Áp dụng lọc giá nếu có giá trị minPrice và maxPrice
-            if (minPrice.HasValue && maxPrice.HasValue)
-            {
-                hangHoas = hangHoas.Where(p => p.DonGia >= minPrice && p.DonGia <= maxPrice);
-            }
-
 
             var pageNumber = page ?? 1;
             var pageSize = 9; // Số sản phẩm trên mỗi trang
@@ -43,11 +37,6 @@ namespace app1.Controllers
                 TenLoai = p.MaLoaiNavigation.TenLoai
             });
 
-            // Sắp xếp theo giá nếu có lọc giá
-            if (minPrice.HasValue && maxPrice.HasValue)
-            {
-                rs = rs.OrderBy(p => p.DonGia);
-            }
 
             var pagedHangHoas = rs.ToPagedList(pageNumber, pageSize);
 

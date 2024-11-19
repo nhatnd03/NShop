@@ -1,0 +1,29 @@
+﻿
+@model List<app1.ViewModels.HangHoaVM>
+
+@foreach (var item in Model)
+
+{
+    <div class="d-flex align-items-center justify-content-start">
+        <div class="rounded me-4" style="width: 100px; height: 100px;">
+            <a asp-action="Detail" asp-controller="HangHoa" asp-route-id="@item.MaHh">
+                <img src="~/Images/HangHoa/@item.Hinh" class="img-fluid rounded" alt="@item.TenHh">
+            </a>
+        </div>
+        <div>
+            <h6 class="mb-2">@item.TenHh</h6>
+            <div class="d-flex mb-2">
+                <!-- Add rating stars here if needed -->
+                <i class="fa fa-star text-secondary"></i>
+                <i class="fa fa-star text-secondary"></i>
+                <i class="fa fa-star text-secondary"></i>
+                <i class="fa fa-star text-secondary"></i>
+                <i class="fa fa-star"></i>
+            </div>
+            <div class="d-flex mb-2">
+                <h5 class="fw-bold me-2">@item.DonGia $</h5>
+                <!-- Add old price if needed -->
+            </div>
+        </div>
+    </div>
+}
