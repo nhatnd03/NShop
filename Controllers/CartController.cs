@@ -3,6 +3,7 @@ using app1.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using app1.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace app1.Controllers
 {
@@ -56,6 +57,15 @@ namespace app1.Controllers
                 HttpContext.Session.Set(MySetting.CART_KEY, giohang);
             }
             return RedirectToAction("Index");
+        }
+        [Authorize]
+        public IActionResult Checkout() 
+        {
+            if(Cart.Count()==0 )
+            {
+                return Redirect("/");
+            }
+            return View(Cart);
         }
     }
 }
