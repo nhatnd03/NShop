@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using app1.Helper;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace app1.Controllers
 {
@@ -17,6 +18,7 @@ namespace app1.Controllers
         {
             return View(Cart);
         }
+        [Authorize]
         public IActionResult AddToCart(int id, int quantity = 1)
         {
             var giohang = Cart;
@@ -46,18 +48,7 @@ namespace app1.Controllers
             }
             HttpContext.Session.Set(MySetting.CART_KEY, giohang);
             return RedirectToAction("Index");
-        }
-        public IActionResult RemoveCart(int id)
-        { 
-            var giohang = Cart;
-            var item = giohang.FirstOrDefault(p => p.MaHh == id);
-            if (item != null)
-            { 
-                giohang.Remove(item);
-                HttpContext.Session.Set(MySetting.CART_KEY, giohang);
-            }
-            return RedirectToAction("Index");
-        }
+        } 
         [Authorize]
         public IActionResult Checkout() 
         {
@@ -67,5 +58,73 @@ namespace app1.Controllers
             }
             return View(Cart);
         }
+        //public IActionResult RemoveCart(int id)
+        //{ 
+        //    var giohang = Cart;
+        //    var item = giohang.FirstOrDefault(p => p.MaHh == id);
+        //    if (item != null)
+        //    { 
+        //        giohang.Remove(item);
+        //        HttpContext.Session.Set(MySetting.CART_KEY, giohang);
+        //    }
+        //    return RedirectToAction("Index");
+        //}
+
+        //[Authorize]
+        //[HttpPost]
+        //public IActionResult UpdateQuantity(int id, int quantity)
+        //{ 
+        //    var giohang = Cart; 
+        //    var item = giohang.FirstOrDefault(p => p.MaHh == id); 
+        //    if (item != null && quantity > 0) 
+        //    { 
+        //        item.SoLuong = quantity;
+
+
+        //        HttpContext.Session.Set(MySetting.CART_KEY, giohang);
+        //    }
+
+        //    var subtotal = giohang.Sum(a => a.ThanhTien);
+        //    var total = subtotal + 3; // Shipping fee
+
+        //    return Json(new { thanhTien = item.ThanhTien, subtotal, total });
+        //}
+        [HttpPost]
+        public IActionResult UpdateQuantity(int id, int quantity)
+        {
+            var giohang = Cart;
+            var item = giohang.FirstOrDefault(p => p.MaHh == id);
+
+            if (item != null && quantity > 0)
+            {
+                item.SoLuong = quantity;
+
+                // Lưu lại cart vào Session
+                HttpContext.Session.Set(MySetting.CART_KEY, giohang);
+            }
+
+            var subtotal = giohang.Sum(a => a.SoLuong * a.DonGia);  // Tính lại subtotal
+            var total = subtotal + 3; // Phí vận chuyển
+
+            return Json(new { thanhTien = item?.ThanhTien, subtotal, total });
+        }
+
+        [HttpPost]
+        public IActionResult RemoveCart(int id)
+        {
+            var giohang = Cart;
+            var item = giohang.FirstOrDefault(p => p.MaHh == id);
+            if (item != null)
+            {
+                giohang.Remove(item);
+            }
+
+            var subtotal = giohang.Sum(a => a.ThanhTien);
+            var total = subtotal + 3; // Shipping fee
+                HttpContext.Session.Set(MySetting.CART_KEY, giohang);
+
+            return Json(new { subtotal, total });
+        }
+
     }
 }
